@@ -7,8 +7,8 @@ import {
   Route,
   Link,
   Redirect,
-  useParams,
   useHistory,
+  useRouteMatch,
 } from "react-router-dom"
 
 const Home = () => (
@@ -18,14 +18,12 @@ const Home = () => (
   </div>
 )
 
-const Note = ({ notes }) => {
-  const id = useParams().id
-  const note = notes.find(n => n.id === Number(id))
+const Note = ({ note }) => {
   return (
     <div>
       <h2>{note.content}</h2>
       <div>{note.user}</div>
-      <div><strong>{note.important ? 'tärkeä' : ''}</strong></div>
+      <div><strong>{note.important ? 'important' : ''}</strong></div>
     </div>
   )
 }
@@ -111,9 +109,13 @@ const App = () => {
     padding: 5
   }
 
+  const match = useRouteMatch('/notes/:id')
+  const note = match 
+    ? notes.find(note => note.id === Number(match.params.id))
+    : null
+
   return (
     <div>
-    <Router>
       <div>
         <Link style={padding} to="/">home</Link>
         <Link style={padding} to="/notes">notes</Link>
@@ -126,7 +128,7 @@ const App = () => {
 
       <Switch>
         <Route path="/notes/:id">
-          <Note notes={notes} />
+          <Note note={note} />
         </Route>
         <Route path="/notes">
           <Notes notes={notes} />
@@ -141,9 +143,8 @@ const App = () => {
           <Home />
         </Route>
       </Switch>
-    </Router>      
+
       <div>
-        <br />
         <em>Note app, Department of Computer Science 2021</em>
       </div>
     </div>
@@ -151,6 +152,8 @@ const App = () => {
 }
 
 ReactDOM.render(
-  <App />,
+  <Router>
+    <App />
+  </Router>,
   document.getElementById('root')
 )
