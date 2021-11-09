@@ -1,5 +1,9 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
+import {
+  BrowserRouter as Router,
+  Switch, Route, Link
+} from "react-router-dom"
 
 const Home = () => (
   <div> <h2>TKTL notes app</h2> </div>
@@ -14,43 +18,35 @@ const Users = () => (
 )
 
 const App = () => {
-  const [page, setPage] = useState('home')
-
- const toPage = (page) => (event) => {
-    event.preventDefault()
-    setPage(page)
-  }
-
-  const content = () => {
-    if (page === 'home') {
-      return <Home />
-    } else if (page === 'notes') {
-      return <Notes />
-    } else if (page === 'users') {
-      return <Users />
-    }
-  }
 
   const padding = {
     padding: 5
   }
 
   return (
-    <div>
+    <Router>
       <div>
-        <a href="" onClick={toPage('home')} style={padding}>
-          home
-        </a>
-        <a href="" onClick={toPage('notes')} style={padding}>
-          notes
-        </a>
-        <a href="" onClick={toPage('users')} style={padding}>
-          users
-        </a>
+        <Link style={padding} to="/">home</Link>
+        <Link style={padding} to="/notes">notes</Link>
+        <Link style={padding} to="/users">users</Link>
       </div>
 
-      {content()}
-    </div>
+      <Switch>
+        <Route path="/notes">
+          <Notes />
+        </Route>
+        <Route path="/users">
+          <Users />
+        </Route>
+        <Route path="/">
+          <Home />
+        </Route>
+      </Switch>
+
+      <div>
+        <i>Note app, Department of Computer Science 2021</i>
+      </div>
+    </Router>
   )
 }
 
