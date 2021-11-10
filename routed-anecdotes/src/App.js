@@ -4,8 +4,8 @@ import {
   Switch,
   Route,
   Link,
-  useParams,
   useRouteMatch,
+  useHistory,
 } from 'react-router-dom';
 
 const Menu = () => {
@@ -71,6 +71,7 @@ const CreateNew = (props) => {
   const [author, setAuthor] = useState('');
   const [info, setInfo] = useState('');
 
+  const history = useHistory();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -80,6 +81,7 @@ const CreateNew = (props) => {
       info,
       votes: 0
     });
+    history.push('/');
   };
 
   return (
@@ -105,6 +107,17 @@ const CreateNew = (props) => {
 
 };
 
+const Notification = ({ notification }) => {
+  if (notification === '') {
+    return null;
+  }
+  return (
+    <div>
+      {notification}
+    </div>
+  );
+};
+
 const App = () => {
   const [anecdotes, setAnecdotes] = useState([
     {
@@ -125,9 +138,20 @@ const App = () => {
 
   const [notification, setNotification] = useState('');
 
+  let timeoutID = null;
+
   const addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0);
     setAnecdotes(anecdotes.concat(anecdote));
+    // Cancel removal of previous notification when a new notification is displayed
+    if (timeoutID !== null) {
+      clearTimeout(timeoutID);
+    }
+    setNotification(`a new anecdote ${anecdote.content} created!`);
+    // Show notification for 10 seconds
+    timeoutID = setTimeout(() => {
+      setNotification('');
+    }, 10 * 1000);
   };
 
   const anecdoteById = (id) =>
@@ -153,6 +177,7 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
+      <Notification notification={notification} />
 
       <Switch>
         <Route path="/anecdotes/:id">
