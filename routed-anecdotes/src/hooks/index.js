@@ -7,7 +7,7 @@ export const useField = (type, name) => {
     setValue(event.target.value);
   };
 
-  const clearInput = () => {
+  const reset = () => {
     setValue('');
   };
 
@@ -16,6 +16,6 @@ export const useField = (type, name) => {
     name,
     value,
     onChange,
-    clearInput,
+    reset,
   };
 };

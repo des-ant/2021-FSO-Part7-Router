@@ -73,6 +73,11 @@ const CreateNew = (props) => {
   const author = useField('text', 'author');
   const info = useField('text', 'info');
 
+  // Prevent input elements from receiving 'reset' attribute
+  const { reset: resetContent, ...contentInput } = content;
+  const { reset: resetAuthor, ...authorInput } = author;
+  const { reset: resetInfo, ...infoInput } = info;
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -88,9 +93,9 @@ const CreateNew = (props) => {
   const handleReset = (e) => {
     e.preventDefault();
 
-    content.clearInput();
-    author.clearInput();
-    info.clearInput();
+    resetContent();
+    resetAuthor();
+    resetInfo();
   };
 
   return (
@@ -99,15 +104,15 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input {...content} />
+          <input {...contentInput} />
         </div>
         <div>
           author
-          <input {...author} />
+          <input {...authorInput} />
         </div>
         <div>
           url for more info
-          <input {...info} />
+          <input {...infoInput} />
         </div>
         <button>create</button>
         <button onClick={handleReset}>reset</button>
