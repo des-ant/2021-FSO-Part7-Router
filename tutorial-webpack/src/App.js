@@ -1,7 +1,12 @@
 import React from 'react'
+import './index.css'
 
-const App = () => (
-  <div>hello webpack</div>
-)
+const App = () => {
+  return (
+    <div className="container">
+      hello webpack
+    </div>
+  )
+}
 
 export default App
