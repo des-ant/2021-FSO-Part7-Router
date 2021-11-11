@@ -7,6 +7,22 @@
     {
       "content": "the best featrure ever <3",
       "id": 2
+    },
+    {
+      "content": "new note",
+      "id": 3
+    },
+    {
+      "content": "new notes",
+      "id": 4
+    },
+    {
+      "content": "new note refresh",
+      "id": 5
+    },
+    {
+      "content": "new note reset",
+      "id": 6
     }
   ],
   "persons": [
@@ -19,6 +35,16 @@
       "name": "kaltsoon",
       "number": "045-2323456",
       "id": 2
+    },
+    {
+      "name": "new person",
+      "number": "1234",
+      "id": 3
+    },
+    {
+      "name": "new person reset",
+      "number": "123455",
+      "id": 4
     }
   ]
 }
