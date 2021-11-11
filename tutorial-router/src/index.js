@@ -12,19 +12,22 @@ import {
 } from "react-router-dom"
 
 import {
-  AppBar,
-  Button,
-  Container,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableRow,
-  TextField,
-  Toolbar,
   Paper,
 } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
+
+import {
+  Button,
+  Input,
+  Page,
+  Navigation,
+  Footer,
+} from './styledComponents'
 
 const Home = () => (
   <div> 
@@ -90,16 +93,14 @@ const Login = (props) => {
       <h2>login</h2>
       <form onSubmit={onSubmit}>
         <div>
-          <TextField label="username" />
+          username:
+          <Input />
         </div>
         <div>
-          <TextField label="password" type='password' />
+          password:
+          <Input type='password' />
         </div>
-        <div>
-          <Button variant="contained" color="primary" type="submit">
-            login
-          </Button>
-        </div>
+        <Button type="submit" primary=''>login</Button>
       </form>
     </div>
   )
@@ -137,6 +138,10 @@ const App = () => {
       setMessage(null)
     }, 10000)
   }
+    
+  const padding = {
+    padding: 5
+  }
 
   const match = useRouteMatch('/notes/:id')
   const note = match 
@@ -144,7 +149,7 @@ const App = () => {
     : null
 
   return (
-    <Container>
+    <Page>
       <div>
         {(message &&
           <Alert severity="success">
@@ -153,25 +158,15 @@ const App = () => {
         )}
       </div>
 
-      <AppBar position="static">
-        <Toolbar>
-          <Button color="inherit" component={Link} to="/">
-            home
-          </Button>
-          <Button color="inherit" component={Link} to="/notes">
-            notes
-          </Button>
-          <Button color="inherit" component={Link} to="/users">
-            users
-          </Button>   
-          {user
-            ? <em>{user} logged in</em>
-            : <Button color="inherit" component={Link} to="/login">
-                login
-              </Button>
-          }
-        </Toolbar>
-      </AppBar>
+      <Navigation>
+        <Link style={padding} to="/">home</Link>
+        <Link style={padding} to="/notes">notes</Link>
+        <Link style={padding} to="/users">users</Link>
+        {user
+          ? <em>{user} logged in</em>
+          : <Link style={padding} to="/login">login</Link>
+        }
+      </Navigation>
 
       <Switch>
         <Route path="/notes/:id">
@@ -191,10 +186,10 @@ const App = () => {
         </Route>
       </Switch>
 
-      <div>
+      <Footer>
         <em>Note app, Department of Computer Science 2021</em>
-      </div>
-    </Container>
+      </Footer>
+    </Page>
   )
 }
 
