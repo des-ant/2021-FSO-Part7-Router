@@ -11,8 +11,6 @@ import { store } from './index';
 const App = () => {
   const [blogs, setBlogs] = useState([]);
 
-  const [notification, setNotification] = useState(null);
-
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -37,9 +35,17 @@ const App = () => {
   }, []);
 
   const notifyWith = (message, type='success') => {
-    setNotification({ message, type });
+    store.dispatch({
+      type: 'SET_NOTIFICATION',
+      data: {
+        message,
+        type,
+      },
+    });
     setTimeout(() => {
-      setNotification(null);
+      store.dispatch({
+        type: 'CLEAR_NOTIFICATION',
+      });
     }, 5000);
   };
 
@@ -56,13 +62,6 @@ const App = () => {
       blogService.setToken(user.token);
       setUser(user);
       notifyWith('logged in successfully');
-      store.dispatch({
-        type: 'SET_NOTIFICATION',
-        data: {
-          message: 'logged out successfully',
-          type: 'success',
-        },
-      });
       setUsername('');
       setPassword('');
     } catch (exception) {
@@ -79,13 +78,6 @@ const App = () => {
     // Remove user details from state, thus reloading the App UI
     setUser(null);
     notifyWith('logged out successfully');
-    store.dispatch({
-      type: 'SET_NOTIFICATION',
-      data: {
-        message: 'logged out successfully',
-        type: 'success',
-      },
-    });
   };
 
   const addBlog = async (blogObject) => {
@@ -135,9 +127,8 @@ const App = () => {
     return (
       <div>
         <h2>log in to application</h2>
-        {console.log(store.getState())}
         <Notification
-          notification={notification}
+          notification={store.getState()}
         />
         <LoginForm
           handleSubmit={handleLogin}
@@ -153,9 +144,8 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      {console.log(store.getState())}
       <Notification
-        notification={notification}
+        notification={store.getState()}
       />
       <p>{user.name} logged in</p>
       <button onClick={handleLogout}>logout</button>
