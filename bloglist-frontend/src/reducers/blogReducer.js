@@ -1,11 +1,12 @@
 import blogService from '../services/blogs';
 
-// const byLikes = (b1, b2) => b2.likes - b1.likes;
+// Sort blogs by number of likes in descending order
+const byLikes = (b1, b2) => b2.likes - b1.likes;
 
 const reducer = (state = [], action) => {
   switch (action.type) {
     case 'INIT':
-      return action.data;
+      return action.data.sort(byLikes);
     default:
       return state;
   }
