@@ -6,9 +6,14 @@ import Notification from './components/Notification';
 import Togglable from './components/Togglable';
 import blogService from './services/blogs';
 import loginService from './services/login';
-import { store } from './index';
+// import { store } from './index';
+import { setNotification, clearNotification } from './reducers/notificationReducer';
+import { useSelector, useDispatch } from 'react-redux';
 
 const App = () => {
+  const dispatch = useDispatch();
+  const notification = useSelector(state => state);
+
   const [blogs, setBlogs] = useState([]);
 
   const [username, setUsername] = useState('');
@@ -35,17 +40,9 @@ const App = () => {
   }, []);
 
   const notifyWith = (message, type='success') => {
-    store.dispatch({
-      type: 'SET_NOTIFICATION',
-      data: {
-        message,
-        type,
-      },
-    });
+    dispatch(setNotification(message, type));
     setTimeout(() => {
-      store.dispatch({
-        type: 'CLEAR_NOTIFICATION',
-      });
+      dispatch(clearNotification());
     }, 5000);
   };
 
@@ -128,7 +125,7 @@ const App = () => {
       <div>
         <h2>log in to application</h2>
         <Notification
-          notification={store.getState()}
+          notification={notification}
         />
         <LoginForm
           handleSubmit={handleLogin}
@@ -145,7 +142,7 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <Notification
-        notification={store.getState()}
+        notification={notification}
       />
       <p>{user.name} logged in</p>
       <button onClick={handleLogout}>logout</button>

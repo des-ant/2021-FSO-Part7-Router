@@ -9,4 +9,18 @@ const notificationReducer = (state = null, action) => {
   }
 };
 
+export const setNotification = (message, type='success') => {
+  return {
+    type: 'SET_NOTIFICATION',
+    data: {
+      message,
+      type,
+    },
+  };
+};
+
+export const clearNotification = () => (
+  { type: 'CLEAR_NOTIFICATION' }
+);
+
 export default notificationReducer;
