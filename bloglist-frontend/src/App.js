@@ -6,13 +6,11 @@ import Notification from './components/Notification';
 import Togglable from './components/Togglable';
 import blogService from './services/blogs';
 import loginService from './services/login';
-// import { store } from './index';
 import { setNotification, clearNotification } from './reducers/notificationReducer';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 const App = () => {
   const dispatch = useDispatch();
-  const notification = useSelector(state => state);
 
   const [blogs, setBlogs] = useState([]);
 
@@ -124,9 +122,7 @@ const App = () => {
     return (
       <div>
         <h2>log in to application</h2>
-        <Notification
-          notification={notification}
-        />
+        <Notification />
         <LoginForm
           handleSubmit={handleLogin}
           username={username}
@@ -141,9 +137,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification
-        notification={notification}
-      />
+      <Notification />
       <p>{user.name} logged in</p>
       <button onClick={handleLogout}>logout</button>
       <h2>create new</h2>
