@@ -9,7 +9,7 @@ import loginService from './services/login';
 import { setNotification } from './reducers/notificationReducer';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { initializeBlogs, createBlog } from './reducers/blogReducer';
+import { initializeBlogs, createBlog, likeBlog, deleteBlog } from './reducers/blogReducer';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -89,25 +89,28 @@ const App = () => {
     }
   };
 
-  const increaseLikesOf = async (id) => {
-    const blog = blogs.find(b => b.id === id);
-    const changedBlog = { ...blog, likes: blog.likes + 1 };
+  const handleLike = async (id) => {
+    const toLike = blogs.find(b => b.id === id);
     try {
-      const returnedBlog = await blogService.update(changedBlog);
-      setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog));
-      notifyWith(`you liked blog ${returnedBlog.title}`);
+      dispatch(likeBlog(toLike));
+      notifyWith(`you liked blog ${toLike.title}`);
     } catch (exception) {
       notifyWith(`${exception.response.data.error}`, 'error');
     }
   };
 
-  const deleteBlog = async (id) => {
-    try {
-      await blogService.remove(id);
-      setBlogs(blogs.filter(blog => blog.id !== id));
-      notifyWith('blog deleted successfully');
-    } catch (exception) {
-      notifyWith(`${exception.response.data.error}`, 'error');
+  const handleRemove = async (id) => {
+    const blogToRemove = blogs.find(b => b.id === id);
+    const okToRemove = window.confirm(
+      `Remove blog ${blogToRemove.title} by ${blogToRemove.author}`
+    );
+    if (okToRemove) {
+      try {
+        dispatch(deleteBlog(id));
+        notifyWith('blog deleted successfully');
+      } catch (exception) {
+        notifyWith(`${exception.response.data.error}`, 'error');
+      }
     }
   };
 
@@ -145,8 +148,8 @@ const App = () => {
         <Blog
           key={blog.id}
           blog={blog}
-          increaseLikes={() => increaseLikesOf(blog.id)}
-          deleteBlog={() => deleteBlog(blog.id)}
+          handleLike={() => handleLike(blog.id)}
+          handleRemove={() => handleRemove(blog.id)}
           username={user ? user.username : null}
         />
       )}

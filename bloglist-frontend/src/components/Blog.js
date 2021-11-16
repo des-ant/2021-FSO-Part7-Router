@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-const Blog = ({ blog, increaseLikes, deleteBlog, username }) => {
+const Blog = ({ blog, handleLike, handleRemove, username }) => {
   const [visible, setVisible] = useState(false);
 
   const hideWhenVisible = { display: visible ? 'none' : '' };
@@ -29,12 +29,12 @@ const Blog = ({ blog, increaseLikes, deleteBlog, username }) => {
       <div style={showWhenVisible}>
         <div>{blog.url}</div>
         <div>likes <span className='likes'>{blog.likes}</span></div>
-        <button onClick={increaseLikes}>like</button>
+        <button onClick={handleLike}>like</button>
         <div>
           {`${blog.user ? blog.user.name : 'No Owner'}`}
         </div>
         {blog.user && blog.user.username === username &&
-        <button onClick={deleteBlog}>remove</button>}
+        <button onClick={handleRemove}>remove</button>}
       </div>
     </div>
   );
@@ -42,8 +42,8 @@ const Blog = ({ blog, increaseLikes, deleteBlog, username }) => {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  increaseLikes: PropTypes.func.isRequired,
-  deleteBlog: PropTypes.func.isRequired,
+  handleLike: PropTypes.func.isRequired,
+  handleRemove: PropTypes.func.isRequired,
   username: PropTypes.string.isRequired
 };
 

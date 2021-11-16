@@ -9,6 +9,16 @@ const reducer = (state = [], action) => {
       return action.data.sort(byLikes);
     case 'CREATE':
       return [...state, action.data];
+    case 'LIKE': {
+      const liked = action.data;
+      // Create new list of blogs, updating the blog that was liked
+      return state.map(b => b.id === liked.id ? liked : b).sort(byLikes);
+    }
+    case 'DELETE': {
+      const id = action.id;
+      // Create new list of blogs without the deleted blog
+      return state.filter(b => b.id !== id);
+    }
     default:
       return state;
   }
@@ -30,6 +40,27 @@ export const createBlog = (blog) => {
     dispatch({
       type: 'CREATE',
       data,
+    });
+  };
+};
+
+export const likeBlog = (blog) => {
+  return async dispatch => {
+    const toLike = { ...blog, likes: blog.likes + 1 };
+    const data = await blogService.update(toLike);
+    dispatch({
+      type: 'LIKE',
+      data,
+    });
+  };
+};
+
+export const deleteBlog = (id) => {
+  return async dispatch => {
+    await blogService.remove(id);
+    dispatch({
+      type: 'DELETE',
+      id,
     });
   };
 };
