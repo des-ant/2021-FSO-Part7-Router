@@ -1,28 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
 import App from './App';
 import './index.css';
-import { createStore } from 'redux';
-
-const notificationReducer = (state = null, action) => {
-  switch (action.type) {
-    case 'SET_NOTIFICATION':
-      return { ...state, message: action.data.message, type: action.data.type };
-    case 'CLEAR_NOTIFICATION':
-      return null;
-    default:
-      return state;
-  }
-};
+import notificationReducer from './reducers/notificationReducer';
 
 export const store = createStore(notificationReducer);
 
-const renderApp = () => {
-  ReactDOM.render(
-    <App />,
-    document.getElementById('root')
-  );
-};
-
-renderApp();
-store.subscribe(renderApp);
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+);
