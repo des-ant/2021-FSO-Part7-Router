@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { setNotification } from './reducers/notificationReducer';
+import { useDispatch, useSelector } from 'react-redux';
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
 import BlogForm from './components/BlogForm';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
-import blogService from './services/blogs';
+
 import loginService from './services/login';
-import { setNotification } from './reducers/notificationReducer';
-import { useDispatch, useSelector } from 'react-redux';
+import storage from './utils/storage';
 
 import { initializeBlogs, createBlog, likeBlog, deleteBlog } from './reducers/blogReducer';
 
@@ -35,13 +36,8 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    // Check if user details of logged-in user can be found on the local storage
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
-    }
+    const user = storage.loadUser();
+    setUser(user);
   }, []);
 
   const notifyWith = (message, type='success') => {
@@ -55,14 +51,11 @@ const App = () => {
         username, password,
       });
 
-      window.localStorage.setItem(
-        'loggedBlogappUser', JSON.stringify(user)
-      );
-      blogService.setToken(user.token);
-      setUser(user);
-      notifyWith('logged in successfully');
       setUsername('');
       setPassword('');
+      setUser(user);
+      storage.saveUser(user);
+      notifyWith(`${user.name} welcome back!`);
     } catch (exception) {
       notifyWith(`${exception.response.data.error}`, 'error');
     }
@@ -70,12 +63,8 @@ const App = () => {
 
   const handleLogout = (event) => {
     event.preventDefault();
-
-    // Logout user by removing login details from the local storage in browser
-    window.localStorage.removeItem('loggedBlogappUser');
-
-    // Remove user details from state, thus reloading the App UI
     setUser(null);
+    storage.logoutUser();
     notifyWith('logged out successfully');
   };
 
