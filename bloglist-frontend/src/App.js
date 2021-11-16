@@ -7,7 +7,9 @@ import Togglable from './components/Togglable';
 import blogService from './services/blogs';
 import loginService from './services/login';
 import { setNotification } from './reducers/notificationReducer';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { initializeBlogs } from './reducers/blogReducer';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -22,9 +24,14 @@ const App = () => {
   const blogFormRef = useRef();
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    );
+    dispatch(initializeBlogs());
+  }, [dispatch]);
+
+  const blogsRedux = useSelector(state => state.blogs);
+
+  useEffect(() => {
+    console.log(blogsRedux);
+    setBlogs(blogsRedux);
   }, []);
 
   useEffect(() => {
