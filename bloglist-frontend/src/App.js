@@ -9,7 +9,7 @@ import loginService from './services/login';
 import { setNotification } from './reducers/notificationReducer';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { initializeBlogs } from './reducers/blogReducer';
+import { initializeBlogs, createBlog } from './reducers/blogReducer';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -82,9 +82,8 @@ const App = () => {
   const addBlog = async (blogObject) => {
     try {
       blogFormRef.current.toggleVisibility();
-      const returnedBlog = await blogService.create(blogObject);
-      setBlogs(blogs.concat(returnedBlog));
-      notifyWith(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`);
+      dispatch(createBlog(blogObject));
+      notifyWith(`a new blog ${blogObject.title} by ${blogObject.author} added`);
     } catch (exception) {
       notifyWith(`${exception.response.data.error}`, 'error');
     }
@@ -93,9 +92,8 @@ const App = () => {
   const increaseLikesOf = async (id) => {
     const blog = blogs.find(b => b.id === id);
     const changedBlog = { ...blog, likes: blog.likes + 1 };
-
     try {
-      const returnedBlog = await blogService.update(id, changedBlog);
+      const returnedBlog = await blogService.update(changedBlog);
       setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog));
       notifyWith(`you liked blog ${returnedBlog.title}`);
     } catch (exception) {
