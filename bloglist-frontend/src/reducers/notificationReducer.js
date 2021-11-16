@@ -9,13 +9,27 @@ const notificationReducer = (state = null, action) => {
   }
 };
 
-export const setNotification = (message, type='success') => {
-  return {
-    type: 'SET_NOTIFICATION',
-    data: {
-      message,
-      type,
-    },
+let timeoutID = null;
+
+export const setNotification = (message, type='success', time) => {
+  return async dispatch => {
+    dispatch({
+      type: 'SET_NOTIFICATION',
+      data: {
+        message,
+        type,
+      },
+    });
+
+    if (timeoutID) {
+      clearTimeout(timeoutID);
+    }
+
+    timeoutID = setTimeout(() => {
+      dispatch({
+        type: 'CLEAR_NOTIFICATION'
+      });
+    }, time * 1000);
   };
 };
 

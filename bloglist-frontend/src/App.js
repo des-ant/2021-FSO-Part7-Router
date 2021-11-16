@@ -6,7 +6,7 @@ import Notification from './components/Notification';
 import Togglable from './components/Togglable';
 import blogService from './services/blogs';
 import loginService from './services/login';
-import { setNotification, clearNotification } from './reducers/notificationReducer';
+import { setNotification } from './reducers/notificationReducer';
 import { useDispatch } from 'react-redux';
 
 const App = () => {
@@ -38,10 +38,7 @@ const App = () => {
   }, []);
 
   const notifyWith = (message, type='success') => {
-    dispatch(setNotification(message, type));
-    setTimeout(() => {
-      dispatch(clearNotification());
-    }, 5000);
+    dispatch(setNotification(message, type, 5));
   };
 
   const handleLogin = async (event) => {
