@@ -1,10 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+  Switch, Route
+} from 'react-router-dom';
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
 import BlogForm from './components/BlogForm';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
+import Users from './components/Users';
 
 import loginService from './services/login';
 import storage from './utils/storage';
@@ -116,17 +120,27 @@ const App = () => {
       <Notification />
       <p>{user.name} logged in</p>
       <button onClick={handleLogout}>logout</button>
-      <h2>create new</h2>
-      {blogForm()}
-      {blogs.map(blog =>
-        <Blog
-          key={blog.id}
-          blog={blog}
-          handleLike={() => handleLike(blog.id)}
-          handleRemove={() => handleRemove(blog.id)}
-          username={user ? user.username : null}
-        />
-      )}
+
+      <Switch>
+        <Route path="/users">
+          <Users />
+        </Route>
+
+        <Route path="/">
+          <h2>create new</h2>
+          {blogForm()}
+          {blogs.map(blog =>
+            <Blog
+              key={blog.id}
+              blog={blog}
+              handleLike={() => handleLike(blog.id)}
+              handleRemove={() => handleRemove(blog.id)}
+              username={user ? user.username : null}
+            />
+          )}
+        </Route>
+      </Switch>
+
     </div>
   );
 };
