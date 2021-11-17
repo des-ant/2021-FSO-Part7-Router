@@ -18,9 +18,6 @@ const App = () => {
 
   const [blogs, setBlogs] = useState([]);
 
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-
   const blogFormRef = useRef();
 
   useEffect(() => {
@@ -33,8 +30,6 @@ const App = () => {
     setBlogs(blogsRedux);
   }, []);
 
-  const user = useSelector(state => state.user);
-
   useEffect(() => {
     const userLoggedIn = storage.loadUser();
     if (userLoggedIn) {
@@ -42,18 +37,22 @@ const App = () => {
     }
   }, []);
 
+  const user = useSelector(state => state.user);
+
   const notifyWith = (message, type='success') => {
     dispatch(setNotification(message, type, 5));
   };
 
   const handleLogin = async (event) => {
     event.preventDefault();
+    const username = event.target.username.value;
+    const password = event.target.password.value;
     try {
       const user = await loginService.login({
         username, password,
       });
-      setUsername('');
-      setPassword('');
+      event.target.username.value = '';
+      event.target.password.value = '';
       dispatch(setUser(user));
       storage.saveUser(user);
       notifyWith(`${user.name} welcome back!`);
@@ -117,10 +116,6 @@ const App = () => {
         <Notification />
         <LoginForm
           handleSubmit={handleLogin}
-          username={username}
-          password={password}
-          handleUsernameChange={({ target }) => setUsername(target.value)}
-          handlePasswordChange={({ target }) => setPassword(target.value)}
         />
       </div>
     );
