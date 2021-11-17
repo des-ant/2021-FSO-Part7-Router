@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { setNotification } from './reducers/notificationReducer';
 import { useDispatch, useSelector } from 'react-redux';
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
@@ -10,7 +9,9 @@ import Togglable from './components/Togglable';
 import loginService from './services/login';
 import storage from './utils/storage';
 
+import { setNotification } from './reducers/notificationReducer';
 import { initializeBlogs, createBlog, likeBlog, deleteBlog } from './reducers/blogReducer';
+import { setUser, clearUser } from './reducers/userReducer';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -19,8 +20,6 @@ const App = () => {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
-  const [user, setUser] = useState(null);
 
   const blogFormRef = useRef();
 
@@ -31,13 +30,16 @@ const App = () => {
   const blogsRedux = useSelector(state => state.blogs);
 
   useEffect(() => {
-    console.log(blogsRedux);
     setBlogs(blogsRedux);
   }, []);
 
+  const user = useSelector(state => state.user);
+
   useEffect(() => {
-    const user = storage.loadUser();
-    setUser(user);
+    const userLoggedIn = storage.loadUser();
+    if (userLoggedIn) {
+      dispatch(setUser(userLoggedIn));
+    }
   }, []);
 
   const notifyWith = (message, type='success') => {
@@ -50,10 +52,9 @@ const App = () => {
       const user = await loginService.login({
         username, password,
       });
-
       setUsername('');
       setPassword('');
-      setUser(user);
+      dispatch(setUser(user));
       storage.saveUser(user);
       notifyWith(`${user.name} welcome back!`);
     } catch (exception) {
@@ -63,7 +64,7 @@ const App = () => {
 
   const handleLogout = (event) => {
     event.preventDefault();
-    setUser(null);
+    dispatch(clearUser());
     storage.logoutUser();
     notifyWith('logged out successfully');
   };
