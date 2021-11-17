@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
@@ -16,19 +16,13 @@ import { setUser, clearUser } from './reducers/userReducer';
 const App = () => {
   const dispatch = useDispatch();
 
-  const [blogs, setBlogs] = useState([]);
-
   const blogFormRef = useRef();
 
   useEffect(() => {
     dispatch(initializeBlogs());
   }, [dispatch]);
 
-  const blogsRedux = useSelector(state => state.blogs);
-
-  useEffect(() => {
-    setBlogs(blogsRedux);
-  }, []);
+  const blogs = useSelector(state => state.blogs);
 
   useEffect(() => {
     const userLoggedIn = storage.loadUser();
@@ -69,13 +63,8 @@ const App = () => {
   };
 
   const addBlog = async (blogObject) => {
-    try {
-      blogFormRef.current.toggleVisibility();
-      dispatch(createBlog(blogObject));
-      notifyWith(`a new blog ${blogObject.title} by ${blogObject.author} added`);
-    } catch (exception) {
-      notifyWith(`${exception.response.data.error}`, 'error');
-    }
+    blogFormRef.current.toggleVisibility();
+    dispatch(createBlog(blogObject));
   };
 
   const handleLike = async (id) => {

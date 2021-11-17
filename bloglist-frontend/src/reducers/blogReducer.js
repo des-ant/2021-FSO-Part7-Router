@@ -1,4 +1,5 @@
 import blogService from '../services/blogs';
+import { setNotification } from './notificationReducer';
 
 // Sort blogs by number of likes in descending order
 const byLikes = (b1, b2) => b2.likes - b1.likes;
@@ -36,11 +37,16 @@ export const initializeBlogs = () => {
 
 export const createBlog = (blog) => {
   return async dispatch => {
-    const data = await blogService.create(blog);
-    dispatch({
-      type: 'CREATE',
-      data,
-    });
+    try {
+      const data = await blogService.create(blog);
+      dispatch({
+        type: 'CREATE',
+        data,
+      });
+      dispatch(setNotification(`a new blog ${blog.title} by ${blog.author} added`));
+    } catch (exception) {
+      dispatch(setNotification(`${exception.response.data.error}`, 'error'));
+    }
   };
 };
 

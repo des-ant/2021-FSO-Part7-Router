@@ -1,36 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-const BlogForm = ({
-  createBlog,
-}) => {
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setUrl] = useState('');
-
-  const handleTitleChange = (event) => {
-    setTitle(event.target.value);
-  };
-
-  const handleAuthorChange = (event) => {
-    setAuthor(event.target.value);
-  };
-
-  const handleUrlChange = (event) => {
-    setUrl(event.target.value);
-  };
-
+const BlogForm = ({ createBlog }) => {
   const addBlog = (event) => {
     event.preventDefault();
+    const title = event.target.title.value;
+    const author = event.target.author.value;
+    const url = event.target.url.value;
     createBlog({
       title: title,
       author: author,
       url: url,
     });
-
-    setTitle('');
-    setAuthor('');
-    setUrl('');
+    event.target.title.value = '';
+    event.target.author.value = '';
+    event.target.url.value = '';
   };
 
   return (
@@ -41,9 +25,7 @@ const BlogForm = ({
           <input
             id='title'
             type='text'
-            value={title}
-            name='Title'
-            onChange={handleTitleChange}
+            name='title'
           />
         </div>
         <div>
@@ -51,9 +33,7 @@ const BlogForm = ({
           <input
             id='author'
             type='text'
-            value={author}
-            name='Author'
-            onChange={handleAuthorChange}
+            name='author'
           />
         </div>
         <div>
@@ -61,9 +41,7 @@ const BlogForm = ({
           <input
             id='url'
             type='text'
-            value={url}
-            name='Url'
-            onChange={handleUrlChange}
+            name='url'
           />
         </div>
         <button id='blogform-button' type='submit'>create</button>

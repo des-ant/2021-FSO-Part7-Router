@@ -11,7 +11,7 @@ const reducer = (state = null, action) => {
 
 let timeoutID = null;
 
-export const setNotification = (message, type='success', time) => {
+export const setNotification = (message, type='success', time=5) => {
   return async dispatch => {
     dispatch({
       type: 'SET_NOTIFICATION',
