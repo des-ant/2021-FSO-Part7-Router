@@ -1,8 +1,20 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 
-const Blog = ({ blog, handleLike, handleRemove, username }) => {
+import { setNotification } from '../reducers/notificationReducer';
+import { likeBlog, deleteBlog } from '../reducers/blogReducer';
+
+const Blog = ({ blog }) => {
   const [visible, setVisible] = useState(false);
+  const dispatch = useDispatch();
+  const userLoggedIn = useSelector(state => state.login);
+
+  if (!blog) {
+    return null;
+  }
+
+  const username = userLoggedIn ? userLoggedIn.username : null;
 
   const hideWhenVisible = { display: visible ? 'none' : '' };
   const showWhenVisible = { display: visible ? '' : 'none' };
@@ -17,6 +29,29 @@ const Blog = ({ blog, handleLike, handleRemove, username }) => {
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5,
+  };
+
+  const handleLike = async () => {
+    try {
+      dispatch(likeBlog(blog));
+      dispatch(setNotification(`you liked blog ${blog.title}`));
+    } catch (exception) {
+      dispatch(setNotification(`${exception.response.data.error}`, 'error'));
+    }
+  };
+
+  const handleRemove = async () => {
+    const okToRemove = window.confirm(
+      `Remove blog ${blog.title} by ${blog.author}`
+    );
+    if (okToRemove) {
+      try {
+        dispatch(deleteBlog(blog.id));
+        dispatch(setNotification('blog deleted successfully'));
+      } catch (exception) {
+        dispatch(setNotification(`${exception.response.data.error}`, 'error'));
+      }
+    }
   };
 
   return (
@@ -42,9 +77,6 @@ const Blog = ({ blog, handleLike, handleRemove, username }) => {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  handleLike: PropTypes.func.isRequired,
-  handleRemove: PropTypes.func.isRequired,
-  username: PropTypes.string.isRequired
 };
 
 export default Blog;

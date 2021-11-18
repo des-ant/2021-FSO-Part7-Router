@@ -4,19 +4,19 @@ import {
   Switch,
   Route,
 } from 'react-router-dom';
-import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
 import BlogForm from './components/BlogForm';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
 import Users from './components/Users';
 import User from './components/User';
+import BlogList from './components/BlogList';
 
 import loginService from './services/login';
 import storage from './utils/storage';
 
 import { setNotification } from './reducers/notificationReducer';
-import { initializeBlogs, createBlog, likeBlog, deleteBlog } from './reducers/blogReducer';
+import { initializeBlogs, createBlog } from './reducers/blogReducer';
 import { loginUser, logoutUser } from './reducers/loginReducer';
 import { initializeUsers } from './reducers/userReducer';
 
@@ -29,8 +29,6 @@ const App = () => {
     dispatch(initializeBlogs());
     dispatch(initializeUsers());
   }, [dispatch]);
-
-  const blogs = useSelector(state => state.blogs);
 
   useEffect(() => {
     const userLoggedIn = storage.loadUser();
@@ -75,31 +73,6 @@ const App = () => {
     dispatch(createBlog(blogObject));
   };
 
-  const handleLike = async (id) => {
-    const toLike = blogs.find(b => b.id === id);
-    try {
-      dispatch(likeBlog(toLike));
-      notifyWith(`you liked blog ${toLike.title}`);
-    } catch (exception) {
-      notifyWith(`${exception.response.data.error}`, 'error');
-    }
-  };
-
-  const handleRemove = async (id) => {
-    const blogToRemove = blogs.find(b => b.id === id);
-    const okToRemove = window.confirm(
-      `Remove blog ${blogToRemove.title} by ${blogToRemove.author}`
-    );
-    if (okToRemove) {
-      try {
-        dispatch(deleteBlog(id));
-        notifyWith('blog deleted successfully');
-      } catch (exception) {
-        notifyWith(`${exception.response.data.error}`, 'error');
-      }
-    }
-  };
-
   const blogForm = () => (
     <Togglable buttonLabel="create new blog" ref={blogFormRef}>
       <BlogForm createBlog={addBlog} />
@@ -137,15 +110,7 @@ const App = () => {
         <Route path="/">
           <h2>create new</h2>
           {blogForm()}
-          {blogs.map(blog =>
-            <Blog
-              key={blog.id}
-              blog={blog}
-              handleLike={() => handleLike(blog.id)}
-              handleRemove={() => handleRemove(blog.id)}
-              username={userLoggedIn ? userLoggedIn.username : null}
-            />
-          )}
+          <BlogList />
         </Route>
       </Switch>
 
