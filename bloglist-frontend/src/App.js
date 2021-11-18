@@ -11,6 +11,7 @@ import Togglable from './components/Togglable';
 import Users from './components/Users';
 import User from './components/User';
 import BlogList from './components/BlogList';
+import Blog from './components/Blog';
 
 import loginService from './services/login';
 import storage from './utils/storage';
@@ -105,6 +106,10 @@ const App = () => {
 
         <Route path="/users">
           <Users />
+        </Route>
+
+        <Route path="/blogs/:id">
+          <Blog />
         </Route>
 
         <Route path="/">

@@ -1,35 +1,28 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
+import { useRouteMatch } from 'react-router';
+import { useHistory } from 'react-router-dom';
 
 import { setNotification } from '../reducers/notificationReducer';
 import { likeBlog, deleteBlog } from '../reducers/blogReducer';
 
-const Blog = ({ blog }) => {
-  const [visible, setVisible] = useState(false);
+const Blog = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const userLoggedIn = useSelector(state => state.login);
+  const blogs = useSelector(state => state.blogs);
+
+  // Find user by id matching url parameter
+  const match = useRouteMatch('/blogs/:id');
+  const blog = match
+    ? blogs.find(blog => blog.id === match.params.id)
+    : null;
 
   if (!blog) {
     return null;
   }
 
   const username = userLoggedIn ? userLoggedIn.username : null;
-
-  const hideWhenVisible = { display: visible ? 'none' : '' };
-  const showWhenVisible = { display: visible ? '' : 'none' };
-
-  const toggleVisibility = () => {
-    setVisible(!visible);
-  };
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  };
 
   const handleLike = async () => {
     try {
@@ -48,6 +41,8 @@ const Blog = ({ blog }) => {
       try {
         dispatch(deleteBlog(blog.id));
         dispatch(setNotification('blog deleted successfully'));
+        // Redirect user to home page after deletion of blog
+        history.push('/');
       } catch (exception) {
         dispatch(setNotification(`${exception.response.data.error}`, 'error'));
       }
@@ -55,28 +50,20 @@ const Blog = ({ blog }) => {
   };
 
   return (
-    <div style={blogStyle} className='blog'>
+    <div className='blog'>
+      <h2>{blog.title}</h2>
+      <div><a href={blog.url} target='_blank' rel='noreferrer'>{blog.url}</a></div>
       <div>
-        <span>{blog.title} {blog.author}</span>
-        <button style={hideWhenVisible} onClick={toggleVisibility}>view</button>
-        <button style={showWhenVisible} onClick={toggleVisibility}>hide</button>
-      </div>
-      <div style={showWhenVisible}>
-        <div>{blog.url}</div>
-        <div>likes <span className='likes'>{blog.likes}</span></div>
+        <span className='likes'>{`${blog.likes} likes`}</span>
         <button onClick={handleLike}>like</button>
-        <div>
-          {`${blog.user ? blog.user.name : 'No Owner'}`}
-        </div>
-        {blog.user && blog.user.username === username &&
-        <button onClick={handleRemove}>remove</button>}
       </div>
+      <div>
+        {`added by ${blog.user ? blog.user.name : 'No Owner'}`}
+      </div>
+      {blog.user && blog.user.username === username &&
+        <button onClick={handleRemove}>remove</button>}
     </div>
   );
-};
-
-Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
 };
 
 export default Blog;
