@@ -16,6 +16,7 @@ import storage from './utils/storage';
 import { setNotification } from './reducers/notificationReducer';
 import { initializeBlogs, createBlog, likeBlog, deleteBlog } from './reducers/blogReducer';
 import { loginUser, logoutUser } from './reducers/loginReducer';
+import { initializeUsers } from './reducers/userReducer';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -24,6 +25,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initializeBlogs());
+    dispatch(initializeUsers());
   }, [dispatch]);
 
   const blogs = useSelector(state => state.blogs);
