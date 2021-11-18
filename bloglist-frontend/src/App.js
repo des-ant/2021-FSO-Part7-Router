@@ -15,7 +15,7 @@ import storage from './utils/storage';
 
 import { setNotification } from './reducers/notificationReducer';
 import { initializeBlogs, createBlog, likeBlog, deleteBlog } from './reducers/blogReducer';
-import { setUser, clearUser } from './reducers/userReducer';
+import { loginUser, logoutUser } from './reducers/loginReducer';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -31,11 +31,11 @@ const App = () => {
   useEffect(() => {
     const userLoggedIn = storage.loadUser();
     if (userLoggedIn) {
-      dispatch(setUser(userLoggedIn));
+      dispatch(loginUser(userLoggedIn));
     }
   }, []);
 
-  const user = useSelector(state => state.user);
+  const user = useSelector(state => state.login);
 
   const notifyWith = (message, type='success') => {
     dispatch(setNotification(message, type, 5));
@@ -51,7 +51,7 @@ const App = () => {
       });
       event.target.username.value = '';
       event.target.password.value = '';
-      dispatch(setUser(user));
+      dispatch(loginUser(user));
       storage.saveUser(user);
       notifyWith(`${user.name} welcome back!`);
     } catch (exception) {
@@ -61,7 +61,7 @@ const App = () => {
 
   const handleLogout = (event) => {
     event.preventDefault();
-    dispatch(clearUser());
+    dispatch(logoutUser());
     storage.logoutUser();
     notifyWith('logged out successfully');
   };

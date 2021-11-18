@@ -1,27 +1,27 @@
 const reducer = (state = null, action) => {
   switch (action.type) {
-    case 'SET_USER':
+    case 'LOGIN_USER':
       return { ...state, ...action.user };
-    case 'CLEAR_USER':
+    case 'LOGOUT_USER':
       return null;
     default:
       return state;
   }
 };
 
-export const setUser = (user) => {
+export const loginUser = (user) => {
   return async dispatch => {
     dispatch({
-      type: 'SET_USER',
+      type: 'LOGIN_USER',
       user,
     });
   };
 };
 
-export const clearUser = () => {
+export const logoutUser = () => {
   return async dispatch => {
     dispatch({
-      type: 'CLEAR_USER',
+      type: 'LOGOUT_USER',
     });
   };
 };
