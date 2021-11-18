@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  Switch, Route
+  Switch,
+  Route,
 } from 'react-router-dom';
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
@@ -9,6 +10,7 @@ import BlogForm from './components/BlogForm';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
 import Users from './components/Users';
+import User from './components/User';
 
 import loginService from './services/login';
 import storage from './utils/storage';
@@ -37,7 +39,7 @@ const App = () => {
     }
   }, []);
 
-  const user = useSelector(state => state.login);
+  const userLoggedIn = useSelector(state => state.login);
 
   const notifyWith = (message, type='success') => {
     dispatch(setNotification(message, type, 5));
@@ -48,14 +50,14 @@ const App = () => {
     const username = event.target.username.value;
     const password = event.target.password.value;
     try {
-      const user = await loginService.login({
+      const userLoggedIn = await loginService.login({
         username, password,
       });
       event.target.username.value = '';
       event.target.password.value = '';
-      dispatch(loginUser(user));
-      storage.saveUser(user);
-      notifyWith(`${user.name} welcome back!`);
+      dispatch(loginUser(userLoggedIn));
+      storage.saveUser(userLoggedIn);
+      notifyWith(`${userLoggedIn.name} welcome back!`);
     } catch (exception) {
       notifyWith(`${exception.response.data.error}`, 'error');
     }
@@ -104,7 +106,7 @@ const App = () => {
     </Togglable>
   );
 
-  if (user === null) {
+  if (userLoggedIn === null) {
     return (
       <div>
         <h2>log in to application</h2>
@@ -120,10 +122,14 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <Notification />
-      <p>{user.name} logged in</p>
+      <p>{userLoggedIn.name} logged in</p>
       <button onClick={handleLogout}>logout</button>
 
       <Switch>
+        <Route path="/users/:id">
+          <User />
+        </Route>
+
         <Route path="/users">
           <Users />
         </Route>
@@ -137,7 +143,7 @@ const App = () => {
               blog={blog}
               handleLike={() => handleLike(blog.id)}
               handleRemove={() => handleRemove(blog.id)}
-              username={user ? user.username : null}
+              username={userLoggedIn ? userLoggedIn.username : null}
             />
           )}
         </Route>
