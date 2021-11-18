@@ -7,9 +7,18 @@ const Users = () => {
   return (
     <div>
       <h2>Users</h2>
-      {users.map(user =>
-        <div key={user.id}>{user.name}</div>
-      )}
+      <table>
+        <tr>
+          <th></th>
+          <th>blogs created</th>
+        </tr>
+        {users.map(user =>
+          <tr key={user.id}>
+            <td>{user.name}</td>
+            <td>{user.blogs.length}</td>
+          </tr>
+        )}
+      </table>
     </div>
   );
 };
