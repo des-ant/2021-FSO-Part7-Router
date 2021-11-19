@@ -1,8 +1,10 @@
 const blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
+const Comment = require('../models/comment');
 const { userExtractor } = require('../utils/middleware');
 
 blogsRouter.get('/', async (request, response) => {
+  // Return all blogs and populate username and name fields of user field
   const blogs = await Blog
     .find({}).populate('user', {
       username: 1, name: 1,
@@ -37,15 +39,24 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
 
 blogsRouter.get('/:id', async (request, response) => {
   const blog = await Blog.findById(request.params.id);
+
   if (blog) {
-    response.json(blog.toJSON());
+    const blogWithComments = await blog.populate('comments', {
+      comment: 1,
+    });
+    response.json(blogWithComments.toJSON());
   } else {
     response.status(404).end();
   }
 });
 
+// eslint-disable-next-line consistent-return
 blogsRouter.put('/:id', async (request, response) => {
-  const { body } = request;
+  const { body, token } = request;
+  // If there is no token, return error status code
+  if (!token) {
+    return response.status(401).json({ error: 'token missing or invalid' });
+  }
 
   const blog = {
     title: body.title,
@@ -76,6 +87,29 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
 
   await Blog.deleteOne(blog);
   response.status(204).end();
+});
+
+// eslint-disable-next-line consistent-return
+blogsRouter.post('/:id/comments', async (request, response) => {
+  const { body, token } = request;
+  const { blog } = body;
+  // If there is no token or object decoded from token does not contain
+  // blog's identity, return error status code
+  if (!token) {
+    return response.status(401).json({ error: 'token missing or invalid' });
+  }
+
+  const comment = new Comment({
+    comment: body.comment,
+    date: new Date(),
+    blog: blog._id,
+  });
+
+  const savedComment = await comment.save();
+  blog.comments = blog.comments.concat(savedComment._id);
+  await blog.save();
+
+  response.json(savedComment.toJSON());
 });
 
 module.exports = blogsRouter;
