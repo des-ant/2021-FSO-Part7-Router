@@ -271,6 +271,30 @@ describe('deletion of a blog', () => {
 });
 
 describe('updating a specific blog', () => {
+  let token;
+
+  beforeEach(async () => {
+    await User.deleteMany({});
+
+    const passwordHash = await bcrypt.hash('sekret', 10);
+    const user = new User({ username: 'root', passwordHash });
+
+    await user.save();
+
+    const loginRequest = {
+      username: 'root',
+      password: 'sekret',
+    };
+
+    const loginResponse = await api
+      .post('/api/login')
+      .send(loginRequest)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    token = loginResponse.body.token;
+  });
+
   test('succeeds with a valid id', async () => {
     const blogsAtStart = await helper.blogsInDb();
 
@@ -282,10 +306,13 @@ describe('updating a specific blog', () => {
       url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
       likes: 12,
       id: blogToUpdate.id,
+      comments: blogToUpdate.comments,
     };
 
     const resultBlog = await api
       .put(`/api/blogs/${blogToUpdate.id}`)
+      .set('Content-Type', 'application/json')
+      .set('Authorization', `bearer ${token}`)
       .send(updatedBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/);
@@ -383,6 +410,63 @@ describe('when there is initially one user in db', () => {
 
     const usersAtEnd = await helper.usersInDb();
     expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  });
+});
+
+describe('when there are blogs saved and user is logged in', () => {
+  let token;
+
+  beforeEach(async () => {
+    await User.deleteMany({});
+
+    const passwordHash = await bcrypt.hash('sekret', 10);
+    const user = new User({ username: 'root', passwordHash });
+
+    await user.save();
+
+    const loginRequest = {
+      username: 'root',
+      password: 'sekret',
+    };
+
+    const loginResponse = await api
+      .post('/api/login')
+      .send(loginRequest)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    token = loginResponse.body.token;
+  });
+
+  test('adding a comment to a blog succeeds', async () => {
+    const blogsAtStart = await helper.blogsInDb();
+
+    const blogToComment = blogsAtStart[0];
+    const commentsAtStart = blogToComment.comments;
+
+    const newComment = {
+      comment: 'New comment',
+    };
+
+    await api
+      .post(`/api/blogs/${blogToComment.id}/comments`)
+      .set('Content-Type', 'application/json')
+      .set('Authorization', `bearer ${token}`)
+      .send(newComment)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    // Verify that the total number of comments in the blog is increased by one
+    const response = await api.get(`/api/blogs/${blogToComment.id}`);
+    const blogCommented = response.body;
+    const commentsAtEnd = blogCommented.comments;
+    expect(commentsAtEnd).toHaveLength(commentsAtStart.length + 1);
+
+    // Get list of comments as strings from list of comment objects of the blog
+    const comments = commentsAtEnd.map((c) => c.comment);
+    expect(comments).toContain(
+      'New comment',
+    );
   });
 });
 

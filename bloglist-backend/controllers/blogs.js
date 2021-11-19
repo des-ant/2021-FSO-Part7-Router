@@ -91,25 +91,30 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
 
 // eslint-disable-next-line consistent-return
 blogsRouter.post('/:id/comments', async (request, response) => {
+  const blog = await Blog.findById(request.params.id);
   const { body, token } = request;
-  const { blog } = body;
   // If there is no token or object decoded from token does not contain
   // blog's identity, return error status code
   if (!token) {
     return response.status(401).json({ error: 'token missing or invalid' });
   }
 
-  const comment = new Comment({
-    comment: body.comment,
-    date: new Date(),
-    blog: blog._id,
-  });
+  if (blog) {
+    const comment = new Comment({
+      comment: body.comment,
+      date: new Date(),
+      blog: blog._id,
+    });
 
-  const savedComment = await comment.save();
-  blog.comments = blog.comments.concat(savedComment._id);
-  await blog.save();
+    const savedComment = await comment.save();
 
-  response.json(savedComment.toJSON());
+    blog.comments = blog.comments.concat(savedComment._id);
+    await blog.save();
+
+    response.json(savedComment.toJSON());
+  } else {
+    response.status(404).end();
+  }
 });
 
 module.exports = blogsRouter;
