@@ -19,6 +19,11 @@ const create = async (blog) => {
   return response.data;
 };
 
+const getOne = async (id) => {
+  const response = await axios.get(`${baseUrl}/${id}`);
+  return response.data;
+};
+
 const update = async (blog) => {
   const response = await axios.put(`${baseUrl}/${blog.id}`, blog, getConfig());
   return response.data;
@@ -29,4 +34,4 @@ const remove = async (id) => {
   return response.data;
 };
 
-export default { getAll, create, update, remove };
+export default { getAll, create, getOne, update, remove };

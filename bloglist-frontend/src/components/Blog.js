@@ -49,6 +49,23 @@ const Blog = () => {
     }
   };
 
+  const displayComments = () => {
+    if (blog.comments.length === 0) {
+      return (
+        <p>No comments added yet</p>
+      );
+    }
+    return (
+      <ul>
+        {blog.comments.map(comment =>
+          <li key={comment.id}>
+            {comment.comment}
+          </li>
+        )}
+      </ul>
+    );
+  };
+
   return (
     <div className='blog'>
       <h2>{blog.title}</h2>
@@ -62,6 +79,8 @@ const Blog = () => {
       </div>
       {blog.user && blog.user.username === username &&
         <button onClick={handleRemove}>remove</button>}
+      <h3>comments</h3>
+      {displayComments()}
     </div>
   );
 };
