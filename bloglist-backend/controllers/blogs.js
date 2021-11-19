@@ -40,15 +40,17 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
 });
 
 blogsRouter.get('/:id', async (request, response) => {
-  const blog = await Blog.findById(request.params.id);
-
-  if (blog) {
-    const blogWithComments = await blog.populate('user', {
+  const blog = await Blog
+    .findById(request.params.id)
+    .populate('user', {
       username: 1, name: 1,
-    }).populate('comments', {
+    })
+    .populate('comments', {
       comment: 1,
     });
-    response.json(blogWithComments.toJSON());
+
+  if (blog) {
+    response.json(blog.toJSON());
   } else {
     response.status(404).end();
   }
