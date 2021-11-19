@@ -20,6 +20,15 @@ const reducer = (state = [], action) => {
       // Create new list of blogs without the deleted blog
       return state.filter(b => b.id !== id);
     }
+    case 'ADD_COMMENT_TO_BLOG': {
+      const comment = action.data;
+      const id = action.id;
+      // Create new list of blogs, updating the blog with the new comment
+      return state.map(b => b.id === id
+        ? { ...b, comments: [...b.comments, comment] }
+        : b)
+        .sort(byLikes);
+    }
     default:
       return state;
   }
@@ -68,6 +77,22 @@ export const deleteBlog = (id) => {
       type: 'DELETE_BLOG',
       id,
     });
+  };
+};
+
+export const addComment = (id, comment) => {
+  return async dispatch => {
+    try {
+      const data = await blogService.addComment(id, comment);
+      dispatch({
+        type: 'ADD_COMMENT_TO_BLOG',
+        data,
+        id,
+      });
+      dispatch(setNotification(`a new comment ${comment.comment} added`));
+    } catch (exception) {
+      dispatch(setNotification(`${exception.response.data.error}`, 'error'));
+    }
   };
 };
 

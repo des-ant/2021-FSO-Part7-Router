@@ -4,7 +4,7 @@ import { useRouteMatch } from 'react-router';
 import { useHistory } from 'react-router-dom';
 
 import { setNotification } from '../reducers/notificationReducer';
-import { likeBlog, deleteBlog } from '../reducers/blogReducer';
+import { likeBlog, deleteBlog, addComment } from '../reducers/blogReducer';
 
 const Blog = () => {
   const dispatch = useDispatch();
@@ -66,6 +66,13 @@ const Blog = () => {
     );
   };
 
+  const handleComment = async (event) => {
+    event.preventDefault();
+    const comment = event.target.comment.value;
+    event.target.comment.value = '';
+    dispatch(addComment(blog.id, { comment }));
+  };
+
   return (
     <div className='blog'>
       <h2>{blog.title}</h2>
@@ -80,6 +87,13 @@ const Blog = () => {
       {blog.user && blog.user.username === username &&
         <button onClick={handleRemove}>remove</button>}
       <h3>comments</h3>
+      <form onSubmit={handleComment}>
+        <input
+          type='text'
+          name='comment'
+        />
+        <button type='submit'>add comment</button>
+      </form>
       {displayComments()}
     </div>
   );

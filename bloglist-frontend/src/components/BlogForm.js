@@ -8,9 +8,9 @@ const BlogForm = ({ createBlog }) => {
     const author = event.target.author.value;
     const url = event.target.url.value;
     createBlog({
-      title: title,
-      author: author,
-      url: url,
+      title,
+      author,
+      url,
     });
     event.target.title.value = '';
     event.target.author.value = '';

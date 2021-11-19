@@ -96,7 +96,7 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
 });
 
 // eslint-disable-next-line consistent-return
-blogsRouter.post('/:id/comments', async (request, response) => {
+blogsRouter.post('/:id/comments', userExtractor, async (request, response) => {
   const blog = await Blog.findById(request.params.id);
   const { body, token } = request;
   // If there is no token or object decoded from token does not contain
