@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   Switch,
   Route,
+  Link,
 } from 'react-router-dom';
 import LoginForm from './components/LoginForm';
 import BlogForm from './components/BlogForm';
@@ -80,6 +81,15 @@ const App = () => {
     </Togglable>
   );
 
+  const padding = {
+    padding: 5
+  };
+
+  const navStyle = {
+    backgroundColor: 'lightgrey',
+    padding: 5
+  };
+
   if (userLoggedIn === null) {
     return (
       <div>
@@ -94,10 +104,16 @@ const App = () => {
 
   return (
     <div>
-      <h2>blogs</h2>
+      <div style={navStyle}>
+        <Link style={padding} to="/">blogs</Link>
+        <Link style={padding} to="/users">users</Link>
+        <span style={padding}>{userLoggedIn.name} logged in</span>
+        <button onClick={handleLogout}>logout</button>
+      </div>
+
       <Notification />
-      <p>{userLoggedIn.name} logged in</p>
-      <button onClick={handleLogout}>logout</button>
+
+      <h2>blog app</h2>
 
       <Switch>
         <Route path="/users/:id">
