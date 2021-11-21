@@ -22,6 +22,8 @@ import { initializeBlogs, createBlog } from './reducers/blogReducer';
 import { loginUser, logoutUser } from './reducers/loginReducer';
 import { initializeUsers } from './reducers/userReducer';
 
+import Container from '@material-ui/core/Container';
+
 const App = () => {
   const dispatch = useDispatch();
 
@@ -103,7 +105,7 @@ const App = () => {
   }
 
   return (
-    <div>
+    <Container>
       <div style={navStyle}>
         <Link style={padding} to="/">blogs</Link>
         <Link style={padding} to="/users">users</Link>
@@ -135,7 +137,7 @@ const App = () => {
         </Route>
       </Switch>
 
-    </div>
+    </Container>
   );
 };
 
