@@ -22,7 +22,12 @@ import { initializeBlogs, createBlog } from './reducers/blogReducer';
 import { loginUser, logoutUser } from './reducers/loginReducer';
 import { initializeUsers } from './reducers/userReducer';
 
-import Container from '@material-ui/core/Container';
+import {
+  AppBar,
+  Button,
+  Container,
+  Toolbar,
+} from '@material-ui/core';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -83,35 +88,34 @@ const App = () => {
     </Togglable>
   );
 
-  const padding = {
-    padding: 5
-  };
-
-  const navStyle = {
-    backgroundColor: 'lightgrey',
-    padding: 5
-  };
-
   if (userLoggedIn === null) {
     return (
-      <div>
+      <Container>
         <h2>log in to application</h2>
         <Notification />
         <LoginForm
           handleSubmit={handleLogin}
         />
-      </div>
+      </Container>
     );
   }
 
   return (
     <Container>
-      <div style={navStyle}>
-        <Link style={padding} to="/">blogs</Link>
-        <Link style={padding} to="/users">users</Link>
-        <span style={padding}>{userLoggedIn.name} logged in</span>
-        <button onClick={handleLogout}>logout</button>
-      </div>
+      <AppBar position="static">
+        <Toolbar>
+          <Button color="inherit" component={Link} to="/">
+            blogs
+          </Button>
+          <Button color="inherit" component={Link} to="/users">
+            users
+          </Button>
+          <em>{userLoggedIn.name} logged in</em>
+          <Button onClick={handleLogout} color="inherit">
+            logout
+          </Button>
+        </Toolbar>
+      </AppBar>
 
       <Notification />
 
