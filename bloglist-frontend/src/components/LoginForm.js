@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, TextField } from '@material-ui/core';
+import { Box, Button, TextField } from '@material-ui/core';
 
 const LoginForm = ({ handleSubmit }) => (
   <form onSubmit={handleSubmit}>
@@ -20,7 +20,7 @@ const LoginForm = ({ handleSubmit }) => (
         name="password"
       />
     </div>
-    <div>
+    <Box sx={{ position: 'relative', my: 3 }}>
       <Button
         id="login-button"
         type="submit"
@@ -29,7 +29,7 @@ const LoginForm = ({ handleSubmit }) => (
       >
         login
       </Button>
-    </div>
+    </Box>
   </form>
 );
 

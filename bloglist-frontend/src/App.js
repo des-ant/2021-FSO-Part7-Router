@@ -24,9 +24,12 @@ import { initializeUsers } from './reducers/userReducer';
 
 import {
   AppBar,
+  Box,
   Button,
   Container,
+  Grid,
   Toolbar,
+  Typography,
 } from '@material-ui/core';
 
 const App = () => {
@@ -83,64 +86,103 @@ const App = () => {
   };
 
   const blogForm = () => (
-    <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-      <BlogForm createBlog={addBlog} />
-    </Togglable>
+    <Box sx={{ pb: 5 }}>
+      <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+        <BlogForm createBlog={addBlog} />
+      </Togglable>
+    </Box>
   );
 
   if (userLoggedIn === null) {
     return (
       <Container>
-        <h2>log in to application</h2>
-        <Notification />
-        <LoginForm
-          handleSubmit={handleLogin}
-        />
+        <Grid
+          container
+          direction="row"
+          justifyContent="center"
+          alignItems="flex-start"
+        >
+          <Grid item md={8}>
+            <Box sx={{ textAlign: 'center', m: 3 }}>
+              <Typography variant="h4" component="h2">
+                Log in to application
+              </Typography>
+            </Box>
+            <Notification />
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+            >
+              <LoginForm
+                handleSubmit={handleLogin}
+              />
+            </Box>
+          </Grid>
+        </Grid>
       </Container>
     );
   }
 
   return (
     <Container>
-      <AppBar position="static">
-        <Toolbar>
-          <Button color="inherit" component={Link} to="/">
-            blogs
-          </Button>
-          <Button color="inherit" component={Link} to="/users">
-            users
-          </Button>
-          <em>{userLoggedIn.name} logged in</em>
-          <Button onClick={handleLogout} color="inherit">
-            logout
-          </Button>
-        </Toolbar>
-      </AppBar>
+      <Grid
+        container
+        direction="row"
+        justifyContent="center"
+        alignItems="flex-start"
+      >
+        <AppBar position="static">
+          <Toolbar>
+            <Button color="inherit" component={Link} to="/">
+              blogs
+            </Button>
+            <Button color="inherit" component={Link} to="/users">
+              users
+            </Button>
+            <Box sx={{ position: 'relative', mx: 3 }}>
+              <Typography component="em">
+                {userLoggedIn.name} logged in
+              </Typography>
+            </Box>
+            <Box flexGrow={1} textAlign='right'>
+              <Button onClick={handleLogout} color="inherit" variant="outlined">
+                logout
+              </Button>
+            </Box>
+          </Toolbar>
+        </AppBar>
 
-      <Notification />
+        <Notification />
 
-      <h2>blog app</h2>
+        <Grid item md={8}>
+          <Box sx={{ textAlign: 'center', m: 3 }}>
+            <Typography variant="h4" component="h2">Blog App</Typography>
+          </Box>
 
-      <Switch>
-        <Route path="/users/:id">
-          <User />
-        </Route>
+          <Switch>
+            <Route path="/users/:id">
+              <User />
+            </Route>
 
-        <Route path="/users">
-          <Users />
-        </Route>
+            <Route path="/users">
+              <Users />
+            </Route>
 
-        <Route path="/blogs/:id">
-          <Blog />
-        </Route>
+            <Route path="/blogs/:id">
+              <Blog />
+            </Route>
 
-        <Route path="/">
-          <h2>create new</h2>
-          {blogForm()}
-          <BlogList />
-        </Route>
-      </Switch>
-
+            <Route path="/">
+              <Box sx={{ my: 3 }}>
+                <Typography variant="h4" component="h2">Create new</Typography>
+              </Box>
+              {blogForm()}
+              <BlogList />
+            </Route>
+          </Switch>
+        </Grid>
+      </Grid>
     </Container>
   );
 };

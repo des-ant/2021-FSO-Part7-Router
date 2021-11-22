@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Button, TextField } from '@material-ui/core';
 
 const BlogForm = ({ createBlog }) => {
   const addBlog = (event) => {
@@ -21,30 +22,39 @@ const BlogForm = ({ createBlog }) => {
     <div className='BlogFormDiv'>
       <form onSubmit={addBlog}>
         <div>
-          title:
-          <input
-            id='title'
-            type='text'
-            name='title'
+          <TextField
+            label="title"
+            id="title"
+            type="text"
+            name="title"
           />
         </div>
         <div>
-          author:
-          <input
-            id='author'
-            type='text'
-            name='author'
+          <TextField
+            label="author"
+            id="author"
+            type="text"
+            name="author"
           />
         </div>
         <div>
-          url:
-          <input
-            id='url'
-            type='text'
-            name='url'
+          <TextField
+            label="url"
+            id="url"
+            type="text"
+            name="url"
           />
         </div>
-        <button id='blogform-button' type='submit'>create</button>
+        <div>
+          <Button
+            id="blogform-button"
+            type="submit"
+            variant="contained"
+            color="primary"
+          >
+            create
+          </Button>
+        </div>
       </form>
     </div>
   );

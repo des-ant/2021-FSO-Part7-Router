@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router';
+import { Box, Typography, List, ListItem } from '@material-ui/core';
 
 const User = () => {
   const users = useSelector(state => state.users);
@@ -17,15 +18,19 @@ const User = () => {
 
   return (
     <div>
-      <h2>{user.name}</h2>
-      <h3>added blogs</h3>
-      <ul>
+      <Box sx={{ my: 3 }}>
+        <Typography variant="h4" component="h2">{user.name}</Typography>
+      </Box>
+      <Box sx={{ my: 3 }}>
+        <Typography variant="h5" component="h3">Added blogs</Typography>
+      </Box>
+      <List>
         {user.blogs.map(blog =>
-          <li key={blog.id}>
-            {blog.title}
-          </li>
+          <ListItem key={blog.id}>
+            <Typography variant="body1" component="span">{blog.title}</Typography>
+          </ListItem>
         )}
-      </ul>
+      </List>
     </div>
   );
 };
